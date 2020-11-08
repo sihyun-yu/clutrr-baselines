@@ -80,6 +80,9 @@ def run_experiment(config, exp, resume=False):
     test_files = glob.glob(os.path.join(base_path, "*_test.csv"))
     assert len(test_files) > 0  # make sure there exist at least one test file
     print(test_files)
+    print(data_config)
+    print(data_config['test_tasks'])
+    print("=============")
     assert len(test_files) == len(data_config['test_tasks'])
     config.dataset.test_files = test_files
     # generate dictionary
