@@ -1,16 +1,16 @@
 ---
 general:
   seed: 42
-  base_path: ''
-  device: cuda:0
+  base_path: "./baseline_bert"
+  device: cuda
   id: GRAPHSUM1
-  exp_name: default
+  exp_name: length2,3,4
   description: Sample code. Does not train any model
-  commit_id: '2756a38'
+  commit_id: '66f3044'
   mode: train # can be train or infer
 dataset:
   base_url: http://localhost:9300/
-  data_path: /home/sihyun/data/data_emnlp_final/data_06b8f2a1
+  data_path: /home/sihyun/data/data_emnlp_final/data_db9b8f04
   save_path: dtp.pkl
   load_save_path: false
   load_dictionary: false
@@ -26,13 +26,13 @@ dataset:
   process_bert: true
 model:
   name: baseline1
-  batch_size: 32
+  batch_size: 8
   num_epochs: 20
   num_entity_block: 20
   persist_per_epoch: -1
   early_stopping_patience: 1
-  save_dir: './exps/'
-  should_load_model: false
+  save_dir: ''
+  should_load_model: true
   dropout_probability: 0
   tf_ratio: 1
   loss_criteria: CE
@@ -56,7 +56,7 @@ model:
     entity_embedding_policy: fixed
   optimiser:
     name: adam
-    learning_rate: 0.001
+    learning_rate: 0.00002 #0.001
     scheduler_type: exp
     scheduler_gamma: 1
     scheduler_patience: 10
@@ -69,7 +69,6 @@ model:
     bidirectional: false
     dropout: 0
     pooling: maxpool # can be attention or maxpool
-    tmp_name: codes.models.gnn.encoder.GraphEncoder
     invalidate_embeddings: True
   decoder:
     name: codes.baselines.lstm.basic.SimpleDecoder
@@ -78,7 +77,6 @@ model:
     bidirectional: false
     dropout: 0
     query_ents: 2
-    tmp_name: codes.models.gnn.decoder.GraphLSTMDecoder
     pool_type: mean # can be either attn, max, mean or last
   beam:
     beam_size: 3
@@ -123,7 +121,7 @@ model:
     embedding_file: bert_embeddings.pt
 log:
   file_path: ''
-  logs_per_epoch: 50
+  logs_per_epoch: 1
   predictions: True # if true, save predicted examples in log folder
   test_each_epoch: True # if true, log the test accuracies per epoch
   comet:
@@ -131,6 +129,6 @@ log:
     project_name: kg # comet project name
     workspace: sihyun-yu # comet workspace
     disabled: true # disable when debugging
-  base_path: ''
+  base_path: './baseline_bert'
 plot:
   base_path: ''

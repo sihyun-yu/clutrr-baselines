@@ -25,13 +25,14 @@ class BERTEncoder(Net):
             self.embedding = shared_embeddings
 
         self.model = BertModel.from_pretrained('bert-base-uncased')
-        self.model.eval()
+        #self.model.eval()
 
     def forward(self, batch):
         out = batch.inp
-        with torch.no_grad():
-            out, _ = self.model(out, batch.bert_segment_ids, batch.bert_input_mask, output_all_encoded_layers=False)
+        #with torch.no_grad():
+        out, _ = self.model(out, batch.bert_segment_ids, batch.bert_input_mask, output_all_encoded_layers=False)
         return out, None
+
 
 class BERTLSTMEncoder(Net):
     """
@@ -49,14 +50,14 @@ class BERTLSTMEncoder(Net):
             self.embedding = shared_embeddings
 
         self.model = BertModel.from_pretrained('bert-base-uncased')
-        self.model.eval()
+        #self.model.eval()
         self.lstm_encoder = SimpleEncoder(model_config, use_embedding=False, shared_embeddings=self.embedding)
 
     def forward(self, batch):
         out = batch.inp
         # pdb.set_trace()
-        with torch.no_grad():
-            out, _ = self.model(out, batch.bert_segment_ids, batch.bert_input_mask, output_all_encoded_layers=False)
+        #with torch.no_grad():
+        out, _ = self.model(out, batch.bert_segment_ids, batch.bert_input_mask, output_all_encoded_layers=False)
         entity_mask = batch.inp_ent_mask.byte()
         entity_emb = self.embedding(batch.bert_inp)
         # replace entity_emb with out in entity mask positions
@@ -68,3 +69,27 @@ class BERTLSTMEncoder(Net):
         out, _ = self.lstm_encoder(mbatch)
 
         return out, None
+
+class BERTGraphEncoder(Net):
+    """
+    Bert with fixed encoding scheme
+    """
+    def __init__(self, model_config, shared_embeddings=None):
+        super().__init__(model_config)
+
+        if not shared_embeddings:
+            self.init_embeddings()
+        else:
+            self.embedding = shared_embeddings
+
+        self.model = BertModel.from_pretrained('bert-base-uncased')
+        #self.model.eval()
+
+    def forward(self, batch):
+        out = batch.inp
+        # mask) 1: entity, 0: no entity
+        #with torch.no_grad():
+        out, _ = self.model(out, batch.bert_segment_ids, batch.bert_input_mask, output_all_encoded_layers=False)
+        return out, None
+
+
